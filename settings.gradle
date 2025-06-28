@@ -1,0 +1,44 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    // 🔧 Add this block to force Kotlin versions
+    components {
+        withModule("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {
+            allVariants {
+                withDependencies {
+                    removeAll { true }
+                    add("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+                }
+            }
+        }
+        withModule("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
+            allVariants {
+                withDependencies {
+                    removeAll { true }
+                    add("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+                }
+            }
+        }
+    }
+}
+
+rootProject.name = "MathQuiz"
+include ':app'
