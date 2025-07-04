@@ -8,4 +8,33 @@
     <string name="usernameEditText">Username</string>
     <string name="passwordEditText">Password</string>
     <string name="loginButton">Login</string>
+
+    <string name="select_quiz">Select Quiz type: </string>
+    <string name="select_difficulty">Select difficulty:</string>
+    <string name="select_subject">Select subject:</string>
+    <string name="select_number_of_questions">Select number of questions:</string>
+    <string name="start_quiz">Start Quiz!</string>
+    <string name="example">e.g. 10</string>
+
+    <string-array name="category_array">
+        <item>Any Category</item>
+        <item>General Knowledge</item>
+        <item>Science: Computers</item>
+        <item>Science: Mathematics</item>
+        <item>History</item>
+        <item>Sports</item>
+    </string-array>
+
+    <string-array name="difficulty_array">
+        <item>Any</item>
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+
+    <string-array name="type_array">
+        <item>Any</item>
+        <item>Multiple Choice</item>
+        <item>True / False</item>
+    </string-array>
 </resources>

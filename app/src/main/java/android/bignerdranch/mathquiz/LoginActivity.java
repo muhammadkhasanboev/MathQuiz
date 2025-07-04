@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (username.equals("Username") && password.equals("Password")) {
                 // Navigate to your main quiz activity
-                Intent intent = new Intent(LoginActivity.this, android.bignerdranch.mathquiz.MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, android.bignerdranch.mathquiz.CutsomizePageActivity.class);
                 startActivity(intent);
                 finish(); // prevent back navigation to login
             } else {

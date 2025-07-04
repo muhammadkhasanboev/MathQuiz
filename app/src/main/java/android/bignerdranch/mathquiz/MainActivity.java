@@ -1,6 +1,4 @@
 package android.bignerdranch.mathquiz;
-import android.bignerdranch.mathquiz.QuizResponse;
-import android.bignerdranch.mathquiz.QuestionItem;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,10 +51,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Get logged-in username
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-
         // Wire UI
         usernameTextView = findViewById(R.id.username_text_view);
         questionTextView = findViewById(R.id.question_text_view);
@@ -65,14 +59,32 @@ public class MainActivity extends AppCompatActivity {
         button3 = findViewById(R.id.button3);
         button4 = findViewById(R.id.button4);
 
+        // Get data from Intent
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("username");
+        int amount = intent.getIntExtra("amount", 10);
+        int category = intent.getIntExtra("category", 0);
+        String difficulty = intent.getStringExtra("difficulty");
+        String type = intent.getStringExtra("type");
+
         if (username != null) {
             usernameTextView.setText("Welcome, " + username + "!");
         } else {
             usernameTextView.setText("Welcome!");
         }
 
-        // API call
-        quizApi.getQuestions(10, 19, "easy", "multiple").enqueue(new Callback<QuizResponse>() {
+        // Log the customization input for debugging
+        Log.d("QUIZ_DEBUG", "amount=" + amount + ", category=" + category + ", difficulty=" + difficulty + ", type=" + type);
+
+        // Make API call with customized data
+        Call<QuizResponse> call = quizApi.getQuestions(
+                amount,
+                category == 0 ? null : category, // API ignores null category
+                difficulty == null || difficulty.isEmpty() ? null : difficulty,
+                type == null || type.isEmpty() ? null : type
+        );
+
+        call.enqueue(new Callback<QuizResponse>() {
             @Override
             public void onResponse(Call<QuizResponse> call, Response<QuizResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {

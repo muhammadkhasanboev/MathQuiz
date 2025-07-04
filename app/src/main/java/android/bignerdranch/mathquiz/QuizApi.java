@@ -9,8 +9,8 @@ public interface QuizApi {
     @GET("api.php")
     Call<QuizResponse> getQuestions(
             @Query("amount") int amount,
-            @Query("category") int category,
-            @Query("difficulty") String difficulty,
-            @Query("type") String type
+            @Query("category") Integer category,        // Use Integer (nullable)
+            @Query("difficulty") String difficulty,     // Pass null if "Any"
+            @Query("type") String type                  // Pass null if "Any"
     );
 }
