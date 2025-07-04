@@ -3,7 +3,6 @@ package android.bignerdranch.mathquiz;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,7 @@ public class CutsomizePageActivity extends AppCompatActivity {
 
     // Maps category names to OpenTrivia category IDs
     private final HashMap<String, Integer> categoryMap = new HashMap<String, Integer>() {{
-        put("Any Category", 0);
+        put("Any Category", null);
         put("General Knowledge", 9);
         put("Science: Computers", 18);
         put("Science: Mathematics", 19);
@@ -34,7 +33,7 @@ public class CutsomizePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cutsomize_page);
+        setContentView(R.layout.activity_cutsomize_page); // ✅ Make sure your layout file name matches this
 
         spinnerCategory = findViewById(R.id.spinner_category);
         spinnerDifficulty = findViewById(R.id.spinner_difficulty);
@@ -86,10 +85,12 @@ public class CutsomizePageActivity extends AppCompatActivity {
             return;
         }
 
-        // Map to actual API values
-        int categoryId = categoryMap.getOrDefault(selectedCategory, 0);
-        String apiDifficulty = selectedDifficulty.equals("any") ? "" : selectedDifficulty;
-        String apiType = "";
+        // ✅ Map category properly (use null for "Any")
+        Integer categoryId = categoryMap.get(selectedCategory);
+
+        // ✅ Normalize difficulty and type
+        String apiDifficulty = selectedDifficulty.equals("any") ? null : selectedDifficulty;
+        String apiType = null;
 
         if (selectedType.equals("multiple choice")) {
             apiType = "multiple";
@@ -97,10 +98,10 @@ public class CutsomizePageActivity extends AppCompatActivity {
             apiType = "boolean";
         }
 
-        // Launch MainActivity with values
+        // ✅ Launch MainActivity with intent extras
         Intent intent = new Intent(CutsomizePageActivity.this, MainActivity.class);
         intent.putExtra("amount", numQuestions);
-        intent.putExtra("category", categoryId);
+        intent.putExtra("category", categoryId == null ? -1 : categoryId); // -1 means "Any"
         intent.putExtra("difficulty", apiDifficulty);
         intent.putExtra("type", apiType);
         startActivity(intent);

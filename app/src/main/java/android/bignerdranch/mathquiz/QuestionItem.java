@@ -14,6 +14,7 @@ public class QuestionItem {
     @SerializedName("incorrect_answers")
     private List<String> incorrectAnswers;
 
+    // Getters
     public String getQuestion() {
         return question;
     }
@@ -24,5 +25,15 @@ public class QuestionItem {
 
     public List<String> getIncorrectAnswers() {
         return incorrectAnswers;
+    }
+
+    // Optional: toString() for debugging
+    @Override
+    public String toString() {
+        return "QuestionItem{" +
+                "question='" + question + '\'' +
+                ", correctAnswer='" + correctAnswer + '\'' +
+                ", incorrectAnswers=" + incorrectAnswers +
+                '}';
     }
 }

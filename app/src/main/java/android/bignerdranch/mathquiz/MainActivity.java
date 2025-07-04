@@ -3,11 +3,13 @@ package android.bignerdranch.mathquiz;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -63,9 +65,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
         int amount = intent.getIntExtra("amount", 10);
-        int category = intent.getIntExtra("category", 0);
+        int rawCategory = intent.getIntExtra("category", -1);
         String difficulty = intent.getStringExtra("difficulty");
         String type = intent.getStringExtra("type");
+
+        Integer category = (rawCategory == -1) ? null : rawCategory;
+        difficulty = (difficulty == null || difficulty.equalsIgnoreCase("any")) ? null : difficulty;
+        type = (type == null || type.equalsIgnoreCase("any")) ? null : type;
 
         if (username != null) {
             usernameTextView.setText("Welcome, " + username + "!");
@@ -77,12 +83,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("QUIZ_DEBUG", "amount=" + amount + ", category=" + category + ", difficulty=" + difficulty + ", type=" + type);
 
         // Make API call with customized data
-        Call<QuizResponse> call = quizApi.getQuestions(
-                amount,
-                category == 0 ? null : category, // API ignores null category
-                difficulty == null || difficulty.isEmpty() ? null : difficulty,
-                type == null || type.isEmpty() ? null : type
-        );
+        Call<QuizResponse> call = quizApi.getQuestions(amount, category, difficulty, type);
 
         call.enqueue(new Callback<QuizResponse>() {
             @Override
@@ -90,7 +91,12 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuestionItem> result = response.body().getResults();
                     Log.d("QUIZ_DEBUG", "Questions received: " + result.size());
-                    runQuiz(result);
+
+                    if (result.isEmpty()) {
+                        showNoQuestionsDialog();
+                    } else {
+                        runQuiz(result);
+                    }
                 } else {
                     Toast.makeText(MainActivity.this, "API error: empty or bad response", Toast.LENGTH_SHORT).show();
                 }
@@ -104,11 +110,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showNoQuestionsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("No Questions Found")
+                .setMessage("Try a different category, difficulty, or question type.")
+                .setPositiveButton("Back", (dialog, which) -> {
+                    finish(); // Go back to CustomizePageActivity
+                })
+                .setCancelable(false)
+                .show();
+    }
+
     private void runQuiz(List<QuestionItem> questions) {
-        if (questions == null || questions.isEmpty()) {
-            Toast.makeText(this, "No questions available", Toast.LENGTH_SHORT).show();
-            return;
-        }
         this.questions = questions;
         currentIndex = 0;
         score = 0;
@@ -133,15 +146,24 @@ public class MainActivity extends AppCompatActivity {
         allAnswers.add(currentQuestion.getCorrectAnswer());
         Collections.shuffle(allAnswers);
 
+        boolean isTrueFalse = allAnswers.size() == 2;
+
+        button1.setVisibility(View.VISIBLE);
+        button2.setVisibility(View.VISIBLE);
+        button3.setVisibility(isTrueFalse ? View.GONE : View.VISIBLE);
+        button4.setVisibility(isTrueFalse ? View.GONE : View.VISIBLE);
+
         button1.setText(allAnswers.get(0));
         button2.setText(allAnswers.get(1));
-        button3.setText(allAnswers.get(2));
-        button4.setText(allAnswers.get(3));
-
         setAnswerListener(button1, allAnswers.get(0), currentQuestion.getCorrectAnswer());
         setAnswerListener(button2, allAnswers.get(1), currentQuestion.getCorrectAnswer());
-        setAnswerListener(button3, allAnswers.get(2), currentQuestion.getCorrectAnswer());
-        setAnswerListener(button4, allAnswers.get(3), currentQuestion.getCorrectAnswer());
+
+        if (!isTrueFalse) {
+            button3.setText(allAnswers.get(2));
+            button4.setText(allAnswers.get(3));
+            setAnswerListener(button3, allAnswers.get(2), currentQuestion.getCorrectAnswer());
+            setAnswerListener(button4, allAnswers.get(3), currentQuestion.getCorrectAnswer());
+        }
     }
 
     private void setAnswerListener(Button button, String selectedAnswer, String correctAnswer) {

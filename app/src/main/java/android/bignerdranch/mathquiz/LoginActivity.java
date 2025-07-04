@@ -1,11 +1,10 @@
 package android.bignerdranch.mathquiz;
 
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -34,21 +34,23 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
 
         loginButton.setOnClickListener(v -> {
-            String username = usernameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            String username = usernameEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
 
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Simple check – you can enhance this later
             if (username.equals("Username") && password.equals("Password")) {
-                // Navigate to your main quiz activity
-                Intent intent = new Intent(LoginActivity.this, android.bignerdranch.mathquiz.CutsomizePageActivity.class);
+                Intent intent = new Intent(LoginActivity.this, CutsomizePageActivity.class);
+                intent.putExtra("username", username); // ✅ pass to next activity
                 startActivity(intent);
-                finish(); // prevent back navigation to login
+                finish();
             } else {
                 Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show();
             }
-
         });
-
-
-
     }
 }

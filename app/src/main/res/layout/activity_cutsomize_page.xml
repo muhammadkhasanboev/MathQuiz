@@ -8,12 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:layout_gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_quiz"
+            android:text="@string/select_subject"
             android:textSize="18sp"
             android:layout_marginTop="16dp" />
 
@@ -39,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_subject"
+            android:text="@string/select_quiz"
             android:textSize="18sp"
             android:layout_marginTop="16dp" />
 
